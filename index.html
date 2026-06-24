@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CME Academy — Bulk Unlock &amp; Merge PDF Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink: #1C2230;
+    --panel: #FFFFFF;
+    --panel-raised: #F6F4EF;
+    --line: #E4E0D6;
+    --paper: #2A2F3A;
+    --muted: #767B89;
+    --brass: #9C7A33;
+    --brass-dim: #C9A35C;
+    --brass-soft: #F4EBD8;
+    --ok: #3E8A5C;
+    --ok-soft: #EAF5EE;
+    --warn: #B14A40;
+    --warn-soft: #FBEDEA;
+    --bg: #FAF8F4;
+    --radius: 10px;
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+
+  html,body{
+    margin:0;
+    background: var(--bg);
+    color:var(--paper);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3{ font-family:'Fraunces',serif; font-weight:600; margin:0; color:var(--ink); }
+
+  .mono{ font-family:'JetBrains Mono',monospace; }
+
+  a{ color:inherit; }
+
+  button{ font-family:inherit; }
+
+  :focus-visible{ outline:2px solid var(--brass); outline-offset:2px; border-radius:4px; }
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 24px 80px;
+  }
+
+  /* ---------- Brand Header ---------- */
+  .brand-header{
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 48px;
+  }
+  .brand-header-inner{
+    max-width:920px;
+    margin:0 auto;
+    padding:28px 24px 26px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+  }
+  .header-spacer{ flex:1; }
+  #logoutBtn{ flex-shrink:0; }
+
+  /* ---------- Auth ---------- */
+  #authSection{
+    display:flex;
+    justify-content:center;
+    padding:40px 0 20px;
+  }
+  .auth-card{
+    width:100%;
+    max-width:380px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:32px 30px 28px;
+    box-shadow: 0 1px 2px rgba(28,34,48,0.04);
+  }
+  .auth-title{ font-size:21px; text-align:center; }
+  .auth-sub{
+    margin:10px 0 24px;
+    color:var(--muted);
+    font-size:13.5px;
+    text-align:center;
+    line-height:1.5;
+  }
+  .field-label{
+    display:block;
+    font-size:12px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+    margin-top:16px;
+  }
+  .field-label:first-of-type{ margin-top:0; }
+  .text-input{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:11px 13px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    background:#fff;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  .text-input:focus{
+    border-color:var(--brass-dim);
+    box-shadow:0 0 0 3px var(--brass-soft);
+    outline:none;
+  }
+  .auth-error{
+    min-height:18px;
+    color:var(--warn);
+    font-size:12.5px;
+    margin-top:12px;
+  }
+  .auth-submit{
+    width:100%;
+    margin-top:14px;
+  }
+  .auth-toggle{
+    margin-top:20px;
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+  }
+  .link-btn{
+    background:none;
+    border:none;
+    color:var(--brass);
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    padding:0 0 0 4px;
+    text-decoration:underline;
+    text-decoration-color:var(--brass-dim);
+  }
+  .link-btn:hover{ color:#86692C; }
+  .brand-mark{
+    width:46px; height:46px;
+    border-radius:50%;
+    background: linear-gradient(160deg, var(--brass-soft), #fff);
+    border:1.5px solid var(--brass-dim);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-mark span{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:18px;
+    color:var(--brass);
+    letter-spacing:.02em;
+  }
+  .brand-text{ display:flex; flex-direction:column; }
+  .brand-name{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:23px;
+    letter-spacing:.04em;
+    color:var(--ink);
+    text-transform:uppercase;
+  }
+  .brand-name b{ color:var(--brass); font-weight:600; }
+  .brand-tagline{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-top:4px;
+  }
+
+  /* ---------- Hero ---------- */
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--brass);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:18px; height:1px;
+    background:var(--brass-dim);
+  }
+
+  h1{
+    font-size:clamp(26px, 4vw, 38px);
+    line-height:1.22;
+    letter-spacing:-0.01em;
+    max-width:720px;
+  }
+  h1 b{ color:var(--brass); font-weight:600; }
+
+  .lede{
+    margin-top:18px;
+    max-width:600px;
+    color:var(--muted);
+    font-size:15.5px;
+    line-height:1.65;
+  }
+
+  .formula{
+    margin-top:32px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 22px;
+    max-width:560px;
+    box-shadow: 0 1px 2px rgba(28,34,48,0.04);
+  }
+  .formula-title{
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  .formula-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:13.5px;
+  }
+  .formula-row .pill{
+    background:var(--panel-raised);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:5px 10px;
+    color:var(--paper);
+    word-break:break-all;
+  }
+  .formula-row .pill.result{
+    background:var(--brass-soft);
+    border-color:var(--brass-dim);
+    color:var(--brass);
+  }
+  .formula-arrow{
+    color:var(--muted);
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .formula-arrow .lbl{ font-family:'Inter',sans-serif; font-size:11px; }
+  .formula-divider{
+    height:1px;
+    background:var(--line);
+    margin:12px 0;
+  }
+  .formula-row + .formula-row{ margin-top:0; }
+
+  /* ---------- Sections ---------- */
+  section{ margin-top:48px; }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:16px;
+  }
+  .section-head h2{ font-size:18px; }
+  .section-head .hint{ font-size:12.5px; color:var(--muted); }
+
+  /* ---------- Dropzone ---------- */
+  .dropzone{
+    border:1.5px dashed var(--line);
+    border-radius:var(--radius);
+    background:var(--panel);
+    padding:42px 24px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .dropzone:hover, .dropzone:focus-visible, .dropzone.drag-over{
+    border-color:var(--brass-dim);
+    background:var(--brass-soft);
+  }
+  .dropzone .lock-icon{ width:34px; height:40px; margin-bottom:14px; }
+  .dropzone p{ margin:0; color:var(--paper); font-size:15px; }
+  .dropzone p span{ color:var(--brass); text-decoration:underline; text-decoration-color:var(--brass-dim); }
+  .dropzone .sub{ margin-top:6px; color:var(--muted); font-size:12.5px; }
+  .dropzone.disabled{ opacity:.5; pointer-events:none; }
+  #fileInput{ display:none; }
+
+  .notice{
+    margin-top:10px;
+    font-size:12.5px;
+    color:var(--warn);
+    min-height:16px;
+  }
+
+  /* ---------- Queue table ---------- */
+  .queue-empty{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:28px;
+    text-align:center;
+    color:var(--muted);
+    font-size:13.5px;
+    background:var(--panel);
+  }
+
+  .table-scroll{ overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 1px 2px rgba(28,34,48,0.04); }
+  .qtable{ width:100%; border-collapse:collapse; min-width:780px; }
+  .qtable th{
+    text-align:left;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:600;
+    padding:12px 14px;
+    background:var(--panel-raised);
+    border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  .qtable td{
+    padding:12px 14px;
+    border-bottom:1px solid var(--line);
+    font-size:13.5px;
+    vertical-align:middle;
+    background:var(--panel);
+  }
+  .qtable tr:last-child td{ border-bottom:none; }
+  .qtable tr.dragging{ opacity:.4; }
+  .qtable tr[draggable="true"]{ cursor:grab; }
+  .qtable tr:hover td{ background:var(--panel-raised); }
+
+  .handle{ color:var(--muted); cursor:grab; font-size:14px; user-select:none; }
+  .fname{ color:var(--paper); }
+  .fname .ext{ color:var(--muted); }
+  .cheque-no{ color:var(--brass); font-weight:600; }
+  .cheque-no.not-found{ color:var(--muted); font-style:italic; font-weight:400; }
+  .pwd-cell{ display:flex; align-items:center; gap:8px; }
+  .pwd-cell .pw{ color:var(--brass); word-break:break-all; }
+  .copy-btn{
+    background:#fff; border:1px solid var(--line); color:var(--muted);
+    border-radius:5px; padding:3px 7px; font-size:12px; cursor:pointer; flex-shrink:0;
+    transition:color .15s, border-color .15s;
+  }
+  .copy-btn:hover{ color:var(--brass); border-color:var(--brass-dim); }
+
+  .status-cell{ display:flex; align-items:center; gap:8px; white-space:nowrap; }
+  .status-cell .lock-icon{ width:16px; height:19px; flex-shrink:0; }
+  .status-text{ font-size:12.5px; }
+  .status-text.muted{ color:var(--muted); }
+  .status-text.ok{ color:var(--ok); }
+  .status-text.warn{ color:var(--warn); }
+
+  .row-remove{
+    background:none; border:none; color:var(--muted); cursor:pointer; font-size:15px;
+    padding:2px 6px; border-radius:5px; transition:color .15s;
+  }
+  .row-remove:hover{ color:var(--warn); }
+
+  .queue-actions{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; flex-wrap:wrap; gap:10px;}
+  .file-count{ font-size:12.5px; color:var(--muted); }
+  .ghost-btn{
+    background:#fff; border:1px solid var(--line); color:var(--muted);
+    border-radius:7px; padding:8px 14px; font-size:13px; cursor:pointer;
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .ghost-btn:hover:not(:disabled){ border-color:var(--brass-dim); color:var(--brass); background:var(--brass-soft); }
+  .ghost-btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+  /* ---------- Primary action ---------- */
+  .primary-btn{
+    background:var(--brass);
+    color:#FFFFFF;
+    border:none;
+    font-weight:600;
+    font-size:14.5px;
+    padding:13px 26px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:background .15s, transform .1s, box-shadow .15s;
+    box-shadow: 0 2px 6px rgba(156,122,51,0.25);
+  }
+  .primary-btn:hover:not(:disabled){ background:#86692C; }
+  .primary-btn:active:not(:disabled){ transform:translateY(1px); }
+  .primary-btn:disabled{ background:var(--brass-dim); color:rgba(255,255,255,.7); cursor:not-allowed; box-shadow:none; }
+
+  .action-row{ display:flex; justify-content:flex-end; margin-top:20px; }
+
+  /* ---------- Stepper ---------- */
+  .stepper{ display:flex; align-items:center; gap:10px; margin-bottom:22px; }
+  .step{ display:flex; align-items:center; gap:8px; }
+  .step-dot{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--line); border:1px solid var(--line);
+    transition:background .25s, border-color .25s;
+  }
+  .step-label{ font-size:12.5px; color:var(--muted); transition:color .25s; }
+  .step-line{ flex:1; height:1px; background:var(--line); max-width:60px; }
+  .step.active .step-dot{ background:var(--brass); border-color:var(--brass); box-shadow:0 0 0 3px var(--brass-soft); }
+  .step.active .step-label{ color:var(--ink); font-weight:600; }
+  .step.done .step-dot{ background:var(--ok); border-color:var(--ok); }
+  .step.done .step-label{ color:var(--ok); }
+
+  /* ---------- Progress ---------- */
+  .progress-panel{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--panel);
+    padding:24px;
+    box-shadow: 0 1px 2px rgba(28,34,48,0.04);
+  }
+  .progress-status{
+    display:flex; justify-content:space-between; gap:12px; margin-bottom:10px;
+    font-size:13px;
+  }
+  #progressLabel{ color:var(--paper); }
+  #progressPct{ color:var(--brass); flex-shrink:0; font-weight:600; }
+  .progress-track{
+    height:8px; background:var(--panel-raised); border-radius:99px; overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .progress-fill{
+    height:100%; width:0%; background:linear-gradient(90deg, var(--brass-dim), var(--brass));
+    transition:width .25s ease;
+  }
+
+  /* ---------- Result ---------- */
+  .result-panel{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:30px 26px;
+    display:flex;
+    align-items:center;
+    gap:22px;
+    flex-wrap:wrap;
+    box-shadow: 0 1px 2px rgba(28,34,48,0.04);
+  }
+  .result-panel.success{ background:var(--ok-soft); border-color:#BFE0CC; }
+  .result-panel.error{ background:var(--warn-soft); border-color:#EFC6C0; }
+  .result-panel .lock-icon{ width:40px; height:48px; flex-shrink:0; }
+  .result-text h3{ font-size:17px; margin-bottom:6px; }
+  .result-text p{ margin:0; color:var(--muted); font-size:13.5px; line-height:1.5; max-width:480px; }
+  .result-buttons{ margin-left:auto; display:flex; gap:10px; flex-wrap:wrap; }
+  .download-btn{
+    background:var(--ok); color:#FFFFFF; font-weight:600; font-size:14px;
+    padding:12px 20px; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+    transition:background .15s;
+    box-shadow: 0 2px 6px rgba(62,138,92,0.25);
+  }
+  .download-btn:hover{ background:#2F6E48; }
+
+  /* ---------- Lock icon ---------- */
+  .lock-icon .lock-body{ fill:var(--panel-raised); stroke:currentColor; stroke-width:2.4; }
+  .lock-icon .lock-key{ fill:currentColor; opacity:.85; }
+  .lock-icon .lock-shackle{
+    fill:none; stroke:currentColor; stroke-width:3.4; stroke-linecap:round;
+    transform-origin:34px 22px; transition:transform .4s ease;
+  }
+  .lock-icon .lock-cross{ stroke:var(--warn); stroke-width:3; stroke-linecap:round; opacity:0; transition:opacity .2s ease; }
+  .lock-icon.state-locked{ color:var(--muted); }
+  .lock-icon.state-processing{ color:var(--brass); }
+  .lock-icon.state-processing .lock-shackle{ animation:jiggle 0.9s ease-in-out infinite; }
+  .lock-icon.state-unlocked{ color:var(--ok); }
+  .lock-icon.state-unlocked .lock-shackle{ transform:translate(11px,-7px) rotate(35deg); }
+  .lock-icon.state-failed{ color:var(--warn); }
+  .lock-icon.state-failed .lock-shackle{ opacity:.35; }
+  .lock-icon.state-failed .lock-cross{ opacity:1; }
+  @keyframes jiggle{ 0%,100%{ transform:rotate(0deg); } 50%{ transform:rotate(-5deg); } }
+
+  /* ---------- Footer ---------- */
+  footer{
+    margin-top:60px;
+    padding-top:24px;
+    border-top:1px solid var(--line);
+    color:var(--muted);
+    font-size:12.5px;
+    line-height:1.6;
+  }
+  footer b{ color:var(--ink); }
+
+  .hidden{ display:none !important; }
+
+  @media (max-width: 640px){
+    .wrap{ padding:0 16px 60px; }
+    .brand-header-inner{ padding:22px 16px 20px; }
+    .result-panel{ flex-direction:column; align-items:flex-start; }
+    .result-buttons{ margin-left:0; }
+    .formula-row{ flex-wrap:wrap; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:0.001ms !important; transition-duration:0.001ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="brand-header">
+  <div class="brand-header-inner">
+    <div class="brand-mark"><span>CA</span></div>
+    <div class="brand-text">
+      <span class="brand-name">CME <b>Academy</b></span>
+      <span class="brand-tagline">Document Services</span>
+    </div>
+    <div class="header-spacer"></div>
+    <button class="ghost-btn hidden" id="logoutBtn" type="button">Log out</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div id="authSection">
+    <div class="auth-card">
+      <h2 class="auth-title">Sign in</h2>
+      <p class="auth-sub">Use your CME Academy account to access the bulk PDF tool.</p>
+
+      <form id="loginForm" autocomplete="on">
+        <label class="field-label" for="loginEmail">Email</label>
+        <input class="text-input" type="email" id="loginEmail" autocomplete="username" required>
+
+        <label class="field-label" for="loginPassword">Password</label>
+        <input class="text-input" type="password" id="loginPassword" autocomplete="current-password" required>
+
+        <div class="auth-error" id="authError" aria-live="polite"></div>
+
+        <button class="primary-btn auth-submit" type="submit" id="loginBtn">Sign in</button>
+      </form>
+
+      <div class="auth-toggle">
+        <span id="authToggleLabel">Don't have an account?</span>
+        <button class="link-btn" type="button" id="authToggleBtn">Create one</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="appSection" class="hidden">
+    <div class="section-head">
+      <h2>1. Add your files</h2>
+      <span class="hint">PDF only · processed locally</span>
+    </div>
+    <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Add PDF files">
+      <svg class="lock-icon state-locked" viewBox="0 0 48 56" aria-hidden="true">
+        <path class="lock-shackle" d="M14 24 V16 a10 10 0 0 1 20 0 v8" />
+        <rect class="lock-body" x="6" y="24" width="36" height="28" rx="4"/>
+        <circle class="lock-key" cx="24" cy="38" r="3.2"/>
+        <rect class="lock-key" x="22.4" y="38" width="3.2" height="8"/>
+      </svg>
+      <p><span>Choose files</span> or drag PDFs here</p>
+      <p class="sub">You can add more later — order is editable below</p>
+    </div>
+    <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple>
+    <div class="notice" id="notice" aria-live="polite"></div>
+  </section>
+
+  <section id="queueSection">
+    <div class="section-head">
+      <h2>2. Review &amp; unlock order</h2>
+      <span class="hint">Drag <span class="mono">⠿</span> for a starting order — files are auto-sequenced by Cheque Number during processing</span>
+    </div>
+
+    <div id="queueEmpty" class="queue-empty">No files added yet.</div>
+
+    <div id="queueTableWrap" class="table-scroll hidden">
+      <table class="qtable">
+        <thead>
+          <tr>
+            <th></th>
+            <th>#</th>
+            <th>Status</th>
+            <th>Filename</th>
+            <th>Cheque No.</th>
+            <th>Generated password</th>
+            <th>Pages</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="queueBody"></tbody>
+      </table>
+    </div>
+
+    <div class="queue-actions hidden" id="queueActions">
+      <span class="file-count" id="fileCount"></span>
+      <button class="ghost-btn" id="clearBtn" type="button">Clear all</button>
+    </div>
+
+    <div class="action-row hidden" id="actionRow">
+      <button class="primary-btn" id="processBtn" type="button">Unlock &amp; merge files</button>
+    </div>
+  </section>
+
+  <section id="progressSection" class="hidden">
+    <div class="section-head">
+      <h2>3. Processing</h2>
+    </div>
+    <div class="stepper" id="stepper">
+      <div class="step" data-step="clean"><span class="step-dot"></span><span class="step-label">Clean</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="unlock"><span class="step-dot"></span><span class="step-label">Unlock</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="sequence"><span class="step-dot"></span><span class="step-label">Sequence</span></div>
+      <div class="step-line"></div>
+      <div class="step" data-step="merge"><span class="step-dot"></span><span class="step-label">Merge</span></div>
+    </div>
+    <div class="progress-panel">
+      <div class="progress-status">
+        <span id="progressLabel" class="mono">Getting ready…</span>
+        <span id="progressPct" class="mono">0%</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressTrack">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="resultSection" class="hidden"></section>
+
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAW2fQ-0DEbvtjv47EHGfEKude9w2iFREg",
+  authDomain: "cheque-payment-cmea.firebaseapp.com",
+  databaseURL: "https://cheque-payment-cmea-default-rtdb.firebaseio.com",
+  projectId: "cheque-payment-cmea",
+  storageBucket: "cheque-payment-cmea.firebasestorage.app",
+  messagingSenderId: "697860251170",
+  appId: "1:697860251170:web:d6990c3b02bf59e3ff747b",
+  measurementId: "G-FR6SN72PP0"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+
+const authSection = document.getElementById('authSection');
+const appSection = document.getElementById('appSection');
+const logoutBtn = document.getElementById('logoutBtn');
+const loginForm = document.getElementById('loginForm');
+const loginEmail = document.getElementById('loginEmail');
+const loginPassword = document.getElementById('loginPassword');
+const loginBtn = document.getElementById('loginBtn');
+const authError = document.getElementById('authError');
+const authToggleBtn = document.getElementById('authToggleBtn');
+const authToggleLabel = document.getElementById('authToggleLabel');
+
+let mode = 'signin'; // 'signin' | 'signup'
+
+function setMode(next){
+  mode = next;
+  if (mode === 'signup'){
+    loginBtn.textContent = 'Create account';
+    authToggleLabel.textContent = 'Already have an account?';
+    authToggleBtn.textContent = 'Sign in';
+  } else {
+    loginBtn.textContent = 'Sign in';
+    authToggleLabel.textContent = "Don't have an account?";
+    authToggleBtn.textContent = 'Create one';
+  }
+  authError.textContent = '';
+}
+
+authToggleBtn.addEventListener('click', () => setMode(mode === 'signin' ? 'signup' : 'signin'));
+
+function friendlyAuthError(err){
+  const code = err && err.code ? err.code : '';
+  if (code === 'auth/invalid-email') return 'That email address looks invalid.';
+  if (code === 'auth/user-not-found') return 'No account found with that email.';
+  if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') return 'Incorrect email or password.';
+  if (code === 'auth/email-already-in-use') return 'An account already exists with that email.';
+  if (code === 'auth/weak-password') return 'Password should be at least 6 characters.';
+  if (code === 'auth/too-many-requests') return 'Too many attempts. Please wait and try again.';
+  return 'Something went wrong. Please try again.';
+}
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  authError.textContent = '';
+  loginBtn.disabled = true;
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value;
+  try{
+    if (mode === 'signup'){
+      await createUserWithEmailAndPassword(auth, email, password);
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
+  } catch(err){
+    authError.textContent = friendlyAuthError(err);
+  } finally {
+    loginBtn.disabled = false;
+  }
+});
+
+logoutBtn.addEventListener('click', async () => {
+  try{ await signOut(auth); } catch(e){ /* ignore */ }
+});
+
+onAuthStateChanged(auth, (user) => {
+  if (user){
+    authSection.classList.add('hidden');
+    appSection.classList.remove('hidden');
+    logoutBtn.classList.remove('hidden');
+    loginForm.reset();
+    authError.textContent = '';
+  } else {
+    authSection.classList.remove('hidden');
+    appSection.classList.add('hidden');
+    logoutBtn.classList.add('hidden');
+  }
+});
+</script>
+
+<script type="module">
+(async function(){
+  let mupdf;
+  try{
+    mupdf = (await import("https://cdn.jsdelivr.net/npm/mupdf@1.27.0/dist/mupdf.js")).default;
+  } catch(e1){
+    console.error('Failed to load MuPDF from jsDelivr, trying unpkg…', e1);
+    try{
+      mupdf = (await import("https://unpkg.com/mupdf@1.27.0/dist/mupdf.js")).default;
+    } catch(e2){
+      console.error('Failed to load MuPDF from unpkg too.', e2);
+      document.getElementById('dropzone').classList.add('disabled');
+      document.getElementById('notice').textContent = 'Could not load the PDF engine (MuPDF WebAssembly). Check your internet connection, disable any script blockers for this page, and reload.';
+      return;
+    }
+  }
+
+  const PASSWORD_KEY = "895605232@";
+
+  let queue = [];
+  let idCounter = 0;
+  let isProcessing = false;
+  let currentObjectUrl = null;
+
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  const notice = document.getElementById('notice');
+  const queueEmpty = document.getElementById('queueEmpty');
+  const queueTableWrap = document.getElementById('queueTableWrap');
+  const queueBody = document.getElementById('queueBody');
+  const queueActions = document.getElementById('queueActions');
+  const fileCount = document.getElementById('fileCount');
+  const clearBtn = document.getElementById('clearBtn');
+  const actionRow = document.getElementById('actionRow');
+  const processBtn = document.getElementById('processBtn');
+  const progressSection = document.getElementById('progressSection');
+  const progressLabel = document.getElementById('progressLabel');
+  const progressPct = document.getElementById('progressPct');
+  const progressFill = document.getElementById('progressFill');
+  const progressTrack = document.getElementById('progressTrack');
+  const resultSection = document.getElementById('resultSection');
+  const stepper = document.getElementById('stepper');
+
+  // ---------- Icon helper ----------
+  function lockIconSVG(state, sizeClass){
+    return (
+      '<svg class="lock-icon ' + state + (sizeClass ? ' ' + sizeClass : '') + '" viewBox="0 0 48 56" aria-hidden="true">' +
+        '<path class="lock-shackle" d="M14 24 V16 a10 10 0 0 1 20 0 v8" />' +
+        '<rect class="lock-body" x="6" y="24" width="36" height="28" rx="4"/>' +
+        '<circle class="lock-key" cx="24" cy="38" r="3.2"/>' +
+        '<rect class="lock-key" x="22.4" y="38" width="3.2" height="8"/>' +
+        '<line class="lock-cross" x1="6" y1="6" x2="18" y2="18" />' +
+        '<line class="lock-cross" x1="18" y1="6" x2="6" y2="18" />' +
+      '</svg>'
+    );
+  }
+
+  // ---------- Password logic ----------
+  function computePassword(filename){
+    const dot = filename.lastIndexOf('.');
+    const base = dot > 0 ? filename.slice(0, dot) : filename;
+    const cleaned = base.replace(/_/g, '');
+    return PASSWORD_KEY + cleaned;
+  }
+
+  function splitName(filename){
+    const dot = filename.lastIndexOf('.');
+    if (dot > 0) return { base: filename.slice(0, dot), ext: filename.slice(dot) };
+    return { base: filename, ext: '' };
+  }
+
+  // ---------- Queue management ----------
+  function addFiles(fileList){
+    const files = Array.from(fileList);
+    let skipped = 0;
+    files.forEach(file => {
+      const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+      if (!isPdf){ skipped++; return; }
+      queue.push({
+        id: ++idCounter,
+        file: file,
+        name: file.name,
+        password: computePassword(file.name),
+        pages: null,
+        chequeNumber: null,
+        chequeNumberValue: null,
+        status: 'pending', // pending | reading | open | unlocked | failed
+        error: null
+      });
+    });
+    notice.textContent = skipped > 0 ? (skipped + ' file(s) skipped — only PDFs are supported.') : '';
+    renderQueue();
+  }
+
+  function removeFile(id){
+    queue = queue.filter(e => e.id !== id);
+    renderQueue();
+  }
+
+  function clearAll(){
+    queue.forEach(e => { if (e._pdf){ e._pdf.destroy(); delete e._pdf; } });
+    queue = [];
+    renderQueue();
+    progressSection.classList.add('hidden');
+    resultSection.classList.add('hidden');
+    resultSection.innerHTML = '';
+    if (currentObjectUrl){ URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; }
+  }
+
+  function statusMeta(entry){
+    switch(entry.status){
+      case 'pending': return { icon:'state-locked', text:'Ready', cls:'muted' };
+      case 'reading': return { icon:'state-processing', text:'Checking…', cls:'muted' };
+      case 'open': return { icon:'state-unlocked', text:'No password needed', cls:'ok' };
+      case 'unlocked': return { icon:'state-unlocked', text:'Unlocked', cls:'ok' };
+      case 'failed': return { icon:'state-failed', text: entry.error || 'Failed', cls:'warn' };
+      default: return { icon:'state-locked', text:'Ready', cls:'muted' };
+    }
+  }
+
+  function renderQueue(){
+    const hasFiles = queue.length > 0;
+    queueEmpty.classList.toggle('hidden', hasFiles);
+    queueTableWrap.classList.toggle('hidden', !hasFiles);
+    queueActions.classList.toggle('hidden', !hasFiles);
+    actionRow.classList.toggle('hidden', !hasFiles);
+
+    if (!hasFiles){ queueBody.innerHTML=''; return; }
+
+    let totalSize = 0;
+    queueBody.innerHTML = queue.map((entry, idx) => {
+      totalSize += entry.file.size;
+      const meta = statusMeta(entry);
+      const { base, ext } = splitName(entry.name);
+      return (
+        '<tr draggable="' + (!isProcessing) + '" data-id="' + entry.id + '">' +
+          '<td><span class="handle">⠿</span></td>' +
+          '<td class="mono">' + (idx+1) + '</td>' +
+          '<td><div class="status-cell">' + lockIconSVG(meta.icon) + '<span class="status-text ' + meta.cls + '">' + escapeHtml(meta.text) + '</span></div></td>' +
+          '<td class="fname mono">' + escapeHtml(base) + '<span class="ext">' + escapeHtml(ext) + '</span></td>' +
+          '<td class="mono">' + (entry.chequeNumber ? '<span class="cheque-no">' + escapeHtml(entry.chequeNumber) + '</span>' : '<span class="cheque-no not-found">not found</span>') + '</td>' +
+          '<td><div class="pwd-cell"><span class="pw mono">' + escapeHtml(entry.password) + '</span>' +
+            '<button class="copy-btn" type="button" data-copy="' + entry.id + '" aria-label="Copy password">⧉</button></div></td>' +
+          '<td class="mono">' + (entry.pages != null ? entry.pages : '—') + '</td>' +
+          '<td><button class="row-remove" type="button" data-remove="' + entry.id + '" aria-label="Remove file" ' + (isProcessing?'disabled':'') + '>✕</button></td>' +
+        '</tr>'
+      );
+    }).join('');
+
+    fileCount.textContent = queue.length + ' file' + (queue.length===1?'':'s') + ' · ' + formatBytes(totalSize) + ' total';
+    processBtn.disabled = isProcessing || queue.length === 0;
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function formatBytes(bytes){
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  // ---------- Drag & drop reorder ----------
+  let dragId = null;
+  queueBody.addEventListener('dragstart', e => {
+    const tr = e.target.closest('tr');
+    if (!tr) return;
+    dragId = Number(tr.dataset.id);
+    tr.classList.add('dragging');
+  });
+  queueBody.addEventListener('dragend', e => {
+    const tr = e.target.closest('tr');
+    if (tr) tr.classList.remove('dragging');
+  });
+  queueBody.addEventListener('dragover', e => {
+    e.preventDefault();
+    const tr = e.target.closest('tr');
+    if (!tr || dragId == null) return;
+    const overId = Number(tr.dataset.id);
+    if (overId === dragId) return;
+    const fromIdx = queue.findIndex(x => x.id === dragId);
+    const toIdx = queue.findIndex(x => x.id === overId);
+    if (fromIdx === -1 || toIdx === -1) return;
+    const [moved] = queue.splice(fromIdx, 1);
+    queue.splice(toIdx, 0, moved);
+    renderQueue();
+  });
+
+  // ---------- Row click handlers ----------
+  queueBody.addEventListener('click', e => {
+    const removeId = e.target.closest('[data-remove]');
+    if (removeId && !isProcessing){ removeFile(Number(removeId.dataset.remove)); return; }
+    const copyId = e.target.closest('[data-copy]');
+    if (copyId){
+      const entry = queue.find(x => x.id === Number(copyId.dataset.copy));
+      if (entry) copyText(entry.password, copyId);
+    }
+  });
+
+  async function copyText(text, btn){
+    try{
+      await navigator.clipboard.writeText(text);
+    } catch(e){
+      try{
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch(e2){ /* ignore */ }
+    }
+    const original = btn.textContent;
+    btn.textContent = '✓';
+    setTimeout(() => { btn.textContent = original; }, 1200);
+  }
+
+  // ---------- Dropzone interactions ----------
+  dropzone.addEventListener('click', () => { if (!isProcessing) fileInput.click(); });
+  dropzone.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ' ') && !isProcessing){ e.preventDefault(); fileInput.click(); }
+  });
+  fileInput.addEventListener('change', e => { addFiles(e.target.files); fileInput.value = ''; });
+
+  ['dragenter','dragover'].forEach(evt => dropzone.addEventListener(evt, e => {
+    e.preventDefault();
+    if (!isProcessing) dropzone.classList.add('drag-over');
+  }));
+  ['dragleave','drop'].forEach(evt => dropzone.addEventListener(evt, e => {
+    e.preventDefault();
+    dropzone.classList.remove('drag-over');
+  }));
+  dropzone.addEventListener('drop', e => {
+    if (isProcessing) return;
+    if (e.dataTransfer && e.dataTransfer.files) addFiles(e.dataTransfer.files);
+  });
+
+  clearBtn.addEventListener('click', () => { if (!isProcessing) clearAll(); });
+
+  // ---------- PDF open helper (MuPDF — preserves original PDF content, no rasterizing) ----------
+  function openPdfDoc(arrayBuffer, password){
+    const bytes = new Uint8Array(arrayBuffer);
+    const doc = mupdf.Document.openDocument(bytes, "application/pdf");
+    let neededPassword = false;
+    if (doc.needsPassword()){
+      neededPassword = true;
+      const result = doc.authenticatePassword(password);
+      if (result === 0){
+        doc.destroy();
+        const err = new Error('Wrong password — filename may not match the rule');
+        err.name = 'PasswordException';
+        throw err;
+      }
+    }
+    const pdf = doc.asPDF();
+    if (!pdf){
+      doc.destroy();
+      throw new Error('Not a valid PDF');
+    }
+    return { pdf: pdf, neededPassword: neededPassword };
+  }
+
+  function describeError(err){
+    if (err && err.name === 'PasswordException') return 'Wrong password — filename may not match the rule';
+    if (err && err.message) return err.message;
+    return 'Could not open this file';
+  }
+
+  // ---------- Cheque Number extraction & sequencing ----------
+  const CHEQUE_RE = /cheque\s*(?:no\.?|number)\s*[:\-]?\s*(\d{2,})/i;
+
+  function extractChequeNumber(pdf){
+    const numPages = pdf.countPages();
+    for (let i = 0; i < numPages; i++){
+      const page = pdf.loadPage(i);
+      const stext = page.toStructuredText();
+      const text = stext.asText();
+      stext.destroy();
+      page.destroy();
+      const match = text.match(CHEQUE_RE);
+      if (match) return match[1];
+    }
+    return null;
+  }
+
+  function compareByChequeNumber(a, b){
+    const aHas = a.chequeNumberValue != null;
+    const bHas = b.chequeNumberValue != null;
+    if (aHas && bHas) return a.chequeNumberValue - b.chequeNumberValue;
+    if (aHas && !bHas) return -1;
+    if (!aHas && bHas) return 1;
+    return 0;
+  }
+
+  // ---------- Progress UI ----------
+  function setStage(stage){
+    const order = ['clean','unlock','sequence','merge'];
+    const idx = order.indexOf(stage);
+    stepper.querySelectorAll('.step').forEach(el => {
+      const s = el.dataset.step;
+      const sIdx = order.indexOf(s);
+      el.classList.remove('active','done');
+      if (sIdx < idx) el.classList.add('done');
+      else if (sIdx === idx) el.classList.add('active');
+    });
+  }
+  function setProgress(fraction, label){
+    const pct = Math.max(0, Math.min(100, Math.round(fraction * 100)));
+    progressFill.style.width = pct + '%';
+    progressPct.textContent = pct + '%';
+    progressTrack.setAttribute('aria-valuenow', String(pct));
+    if (label) progressLabel.textContent = label;
+  }
+
+  function setUIProcessing(state){
+    isProcessing = state;
+    dropzone.classList.toggle('disabled', state);
+    processBtn.disabled = state || queue.length === 0;
+    clearBtn.disabled = state;
+    renderQueue();
+  }
+
+  // ---------- Result panels ----------
+  function showSuccessResult(url, filename, successCount, failCount, totalPages, noChequeCount){
+    resultSection.classList.remove('hidden');
+    const failNote = failCount > 0
+      ? ('<p>' + failCount + ' file(s) couldn\'t be unlocked and were skipped — check the table above for details.</p>')
+      : '';
+    const seqNote = noChequeCount > 0
+      ? ('<p>' + noChequeCount + ' file(s) had no Cheque Number detected and were placed at the end, in their original order.</p>')
+      : ('<p>All files were sequenced by their Cheque Number before merging.</p>');
+    resultSection.innerHTML =
+      '<div class="result-panel success">' +
+        lockIconSVG('state-unlocked') +
+        '<div class="result-text">' +
+          '<h3>Merged ' + successCount + ' file' + (successCount===1?'':'s') + ' into a ' + totalPages + '-page PDF</h3>' +
+          seqNote +
+          failNote +
+        '</div>' +
+        '<div class="result-buttons">' +
+          '<a class="download-btn" href="' + url + '" download="' + filename + '">⬇ Download merged PDF</a>' +
+          '<button class="ghost-btn" type="button" id="startOverBtn">Start over</button>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('startOverBtn').addEventListener('click', clearAll);
+  }
+
+  function showErrorResult(message){
+    resultSection.classList.remove('hidden');
+    resultSection.innerHTML =
+      '<div class="result-panel error">' +
+        lockIconSVG('state-failed') +
+        '<div class="result-text">' +
+          '<h3>Nothing could be merged</h3>' +
+          '<p>' + escapeHtml(message) + '</p>' +
+        '</div>' +
+        '<div class="result-buttons">' +
+          '<button class="ghost-btn" type="button" id="retryBtn">Back to file list</button>' +
+        '</div>' +
+      '</div>';
+    document.getElementById('retryBtn').addEventListener('click', () => {
+      resultSection.classList.add('hidden');
+      resultSection.innerHTML = '';
+    });
+  }
+
+  // ---------- Main pipeline ----------
+  async function processAll(){
+    if (isProcessing || queue.length === 0) return;
+    setUIProcessing(true);
+    progressSection.classList.remove('hidden');
+    resultSection.classList.add('hidden');
+    resultSection.innerHTML = '';
+    setStage('clean');
+    setProgress(0, 'Filenames cleaned, passwords generated…');
+
+    await new Promise(r => setTimeout(r, 250)); // let the "clean" stage register visually
+
+    // Phase 1: unlock / validate each file (kept open in memory for grafting in Phase 2)
+    setStage('unlock');
+    let totalPages = 0;
+    for (const entry of queue){
+      entry.status = 'reading';
+      renderQueue();
+      setProgress(0, 'Checking ' + entry.name + '…');
+      try{
+        const buf = await entry.file.arrayBuffer();
+        const { pdf, neededPassword } = openPdfDoc(buf, entry.password);
+        entry._pdf = pdf;
+        entry.pages = pdf.countPages();
+        entry.status = neededPassword ? 'unlocked' : 'open';
+        totalPages += entry.pages;
+        entry.chequeNumber = extractChequeNumber(pdf);
+        entry.chequeNumberValue = entry.chequeNumber != null ? parseInt(entry.chequeNumber, 10) : null;
+      } catch(err){
+        entry.status = 'failed';
+        entry.error = describeError(err);
+      }
+      renderQueue();
+      await new Promise(r => setTimeout(r, 0)); // keep UI responsive
+    }
+
+    // Phase 1.5: sequence by Cheque Number
+    setStage('sequence');
+    setProgress(0, 'Sequencing files by Cheque Number…');
+    queue.sort(compareByChequeNumber);
+    renderQueue();
+    await new Promise(r => setTimeout(r, 400)); // let the "sequence" stage register visually
+
+    const successEntries = queue.filter(e => e.status === 'unlocked' || e.status === 'open');
+    const noChequeCount = successEntries.filter(e => e.chequeNumberValue == null).length;
+
+    // Free anything we opened for files that ended up failing
+    queue.filter(e => e.status === 'failed' && e._pdf).forEach(e => { e._pdf.destroy(); delete e._pdf; });
+
+    if (successEntries.length === 0){
+      setUIProcessing(false);
+      progressSection.classList.add('hidden');
+      showErrorResult('None of the files could be unlocked. Double-check that each filename matches the password rule shown above.');
+      return;
+    }
+
+    // Phase 2: graft original pages into one PDF — true PDF content, nothing rasterized
+    setStage('merge');
+    const merged = new mupdf.PDFDocument();
+    let pagesDone = 0;
+    let toIndex = 0;
+
+    for (const entry of successEntries){
+      const pdf = entry._pdf;
+      const numPages = pdf.countPages();
+      for (let i = 0; i < numPages; i++){
+        setProgress(pagesDone / totalPages, 'Merging page ' + (i+1) + ' of ' + numPages + ' — ' + entry.name);
+        merged.graftPage(toIndex, pdf, i);
+        toIndex++;
+        pagesDone++;
+        setProgress(pagesDone / totalPages);
+        if (pagesDone % 3 === 0) await new Promise(r => setTimeout(r, 0)); // keep UI responsive
+      }
+      pdf.destroy();
+      delete entry._pdf;
+    }
+
+    setProgress(1, 'Finalizing merged PDF…');
+    const savedBuffer = merged.saveToBuffer();
+    const bytes = new Uint8Array(savedBuffer.asUint8Array()); // copy out of WASM heap before freeing it
+    savedBuffer.destroy();
+    merged.destroy();
+    const blob = new Blob([bytes], { type: 'application/pdf' });
+    if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+    currentObjectUrl = URL.createObjectURL(blob);
+
+    const failCount = queue.length - successEntries.length;
+    setUIProcessing(false);
+    progressSection.classList.add('hidden');
+    showSuccessResult(currentObjectUrl, 'merged-' + successEntries.length + '-files.pdf', successEntries.length, failCount, totalPages, noChequeCount);
+  }
+
+  processBtn.addEventListener('click', processAll);
+
+  renderQueue();
+})();
+</script>
+</body>
+</html>

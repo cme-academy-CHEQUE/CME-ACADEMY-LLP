@@ -279,6 +279,26 @@
   .section-head h2{ font-size:18px; }
   .section-head .hint{ font-size:12.5px; color:var(--muted); }
 
+  /* ---------- Password key control ---------- */
+  .key-panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 20px;
+    margin-bottom:18px;
+    box-shadow: 0 1px 2px rgba(28,34,48,0.04);
+  }
+  .key-panel-row{
+    display:flex;
+    align-items:flex-end;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .key-panel-field{ flex:1; min-width:220px; }
+  .key-panel .field-label{ margin-top:0; }
+  .key-panel .sub{ margin-top:8px; color:var(--muted); font-size:12.5px; }
+  .key-panel .sub .mono{ color:var(--paper); }
+
   /* ---------- Dropzone ---------- */
   .dropzone{
     border:1.5px dashed var(--line);
@@ -548,6 +568,17 @@
   </div>
 
   <div id="appSection" class="hidden">
+    <div class="key-panel">
+      <div class="key-panel-row">
+        <div class="key-panel-field">
+          <label class="field-label" for="passwordKeyInput">Password key</label>
+          <input class="text-input mono" type="text" id="passwordKeyInput" autocomplete="off" spellcheck="false">
+        </div>
+        <button class="ghost-btn" id="resetKeyBtn" type="button">Reset to default</button>
+      </div>
+      <p class="sub">Every generated password starts with this key, followed by the filename (underscores removed). Change it any time — existing rows update immediately. Current default: <span class="mono" id="defaultKeyLabel"></span></p>
+    </div>
+
     <div class="section-head">
       <h2>1. Add your files</h2>
       <span class="hint">PDF only · processed locally</span>
@@ -751,7 +782,8 @@ onAuthStateChanged(auth, (user) => {
     }
   }
 
-  const PASSWORD_KEY = "895605232@";
+  const DEFAULT_PASSWORD_KEY = "895605232@";
+  let PASSWORD_KEY = DEFAULT_PASSWORD_KEY;
 
   let queue = [];
   let idCounter = 0;
@@ -776,6 +808,28 @@ onAuthStateChanged(auth, (user) => {
   const progressTrack = document.getElementById('progressTrack');
   const resultSection = document.getElementById('resultSection');
   const stepper = document.getElementById('stepper');
+  const passwordKeyInput = document.getElementById('passwordKeyInput');
+  const resetKeyBtn = document.getElementById('resetKeyBtn');
+  const defaultKeyLabel = document.getElementById('defaultKeyLabel');
+
+  defaultKeyLabel.textContent = DEFAULT_PASSWORD_KEY;
+  passwordKeyInput.value = PASSWORD_KEY;
+
+  function recomputeAllPasswords(){
+    queue.forEach(entry => { entry.password = computePassword(entry.name); });
+    renderQueue();
+  }
+
+  passwordKeyInput.addEventListener('input', () => {
+    PASSWORD_KEY = passwordKeyInput.value;
+    recomputeAllPasswords();
+  });
+
+  resetKeyBtn.addEventListener('click', () => {
+    PASSWORD_KEY = DEFAULT_PASSWORD_KEY;
+    passwordKeyInput.value = PASSWORD_KEY;
+    recomputeAllPasswords();
+  });
 
   // ---------- Icon helper ----------
   function lockIconSVG(state, sizeClass){
@@ -1052,6 +1106,8 @@ onAuthStateChanged(auth, (user) => {
     dropzone.classList.toggle('disabled', state);
     processBtn.disabled = state || queue.length === 0;
     clearBtn.disabled = state;
+    passwordKeyInput.disabled = state;
+    resetKeyBtn.disabled = state;
     renderQueue();
   }
 
